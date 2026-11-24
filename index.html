@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Show de Perguntas – Desafio do Saber</title>
+<style>
+:root{--navy:#17334d;--teal:#176b70;--teal-dark:#10575d;--mint:#e8f3f1;--paper:#f7faf9;--white:#fff;--ink:#203b4b;--muted:#526b78;--line:#d6e4e5;--amber:#e8b65c;--amber-soft:#fff3da;--success:#23734b;--danger:#a43c43}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,Arial,sans-serif;background:linear-gradient(150deg,#e3eeef,#f7faf9 65%,#e8f1ee);padding:24px 16px;color:var(--ink)}
+.app{max-width:740px;margin:auto;background:var(--white);border:1px solid var(--line);border-radius:28px;padding:16px;box-shadow:0 18px 55px #17334d14}
+header{background:linear-gradient(120deg,var(--navy),var(--teal-dark));color:white;border-radius:20px;padding:24px 16px;text-align:center}
+h1{font-size:clamp(24px,5.5vw,36px);margin:0;font-weight:900;letter-spacing:-.035em}header h2{color:#f4cf88;margin:7px 0;font-size:17px;letter-spacing:.13em;font-weight:800}
+header p{margin:7px 0 0;color:#e3efef;font-size:15px}.animals{display:flex;justify-content:center;gap:clamp(15px,6vw,44px);align-items:center;padding:20px 4px 9px;font-size:clamp(26px,6vw,36px)}
+.animal{display:inline-block;filter:drop-shadow(0 3px 2px #17334d14)}.frog{animation:hop 1.8s infinite}.bunny{animation:ears 2s infinite}.butterfly{animation:fly 2.2s infinite}.elephant{animation:sway 2.5s infinite}.fish{animation:swim 2.5s infinite}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}@keyframes ears{0%,100%{transform:rotate(0)}50%{transform:rotate(6deg) translateY(-3px)}}@keyframes fly{0%,100%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(3px,-6px) rotate(5deg)}}@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-3px)}}@keyframes swim{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:22px;margin:12px 0}.welcome{background:var(--paper);text-align:center}.welcome h2{color:var(--navy);font-size:27px;margin:5px}.welcome p{line-height:1.6;color:var(--muted)}
+.stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{background:var(--mint);padding:9px 13px;border-radius:12px;font-weight:800;color:var(--teal-dark);font-variant-numeric:tabular-nums}.pill#clock{background:var(--amber-soft);color:#79521c}
+.progress{height:9px;background:#e5eeee;border-radius:20px;overflow:hidden;margin:12px 0}.bar{height:100%;width:0;background:var(--teal);border-radius:20px;transition:width .3s}
+.question-card{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:17px 12px 20px;margin-bottom:16px;text-align:center}
+.question{color:var(--navy);font-size:clamp(21px,4.8vw,28px);font-weight:850;line-height:1.3;margin:10px 0 0;overflow-wrap:anywhere}
+.qanimal{display:grid;place-items:center;width:84px;height:84px;background:var(--mint);border:1px solid var(--line);border-radius:24px;font-size:48px;margin:0 auto;line-height:1;animation:emoji-in .35s ease-out}
+@keyframes emoji-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font-family:inherit;border:1px solid transparent;border-radius:13px;padding:15px 12px;font-size:17px;font-weight:750;cursor:pointer;min-height:56px;transition:transform .15s,background .15s,border-color .15s,box-shadow .15s}
+button:active:not(:disabled){transform:translateY(2px)}button:disabled{cursor:default}button:focus-visible{outline:3px solid #b07825;outline-offset:3px}
+.answer{background:var(--white);border-color:#cadcde;color:var(--navy);text-align:left;display:flex;align-items:center;gap:10px;overflow-wrap:anywhere;min-width:0;box-shadow:0 2px 0 #17334d08}
+.answer-letter{flex:0 0 30px;height:30px;display:grid;place-items:center;border-radius:9px;background:var(--mint);color:var(--teal-dark);font-size:14px;font-weight:850}.answer-text{min-width:0;line-height:1.35}
+.answer.correct{background:#e6f4eb;border-color:var(--success);color:#195b3b;box-shadow:inset 0 0 0 1px var(--success)}.answer.correct .answer-letter{background:var(--success);color:white}
+.answer.incorrect{background:#fbeeee;border-color:var(--danger);color:#8b3036;box-shadow:inset 0 0 0 1px var(--danger)}.answer.incorrect .answer-letter{background:var(--danger);color:white}
+.primary{background:var(--teal-dark);color:white;width:100%;margin-top:14px;font-size:18px;box-shadow:0 3px 0 #0c4045}.reset{background:transparent;border-color:var(--line);color:var(--muted);width:100%;margin:5px 0 2px;min-height:46px;font-size:14px}
+@media(hover:hover){.answer:hover:not(:disabled){background:var(--mint);border-color:var(--teal)}.primary:hover{background:var(--teal)}.reset:hover{background:var(--paper);color:var(--navy)}}
+.feedback{border-radius:12px;padding:13px;text-align:center;font-weight:800;margin-top:14px}.good{background:#e6f4eb;color:#195b3b}.bad{background:var(--amber-soft);color:#79521c}
+footer{background:var(--paper);color:var(--muted);text-align:center;border-radius:12px;padding:12px;font-weight:750;font-size:12px;letter-spacing:.07em;margin-top:12px}
+.hidden{display:none!important}.result{text-align:center;background:var(--paper)}.result h2{color:var(--navy);font-size:30px}.score{font-size:42px;color:var(--teal-dark);font-weight:900}
+/* Roleta: tons análogos de azul e verde-azulado; dourado para o ponteiro. */
+.wheel-panel{text-align:center;background:var(--paper);overflow:hidden}.wheel-panel h2{color:var(--navy);margin:0 0 4px;font-size:clamp(22px,5vw,29px);font-weight:900}.wheel-panel p{margin:6px 0 12px;font-weight:650;color:var(--muted)}
+.wheel-stage{position:relative;width:min(100%,360px);aspect-ratio:1;margin:22px auto 14px;isolation:isolate}.wheel-disc{display:block;width:100%;height:100%;border-radius:50%;filter:drop-shadow(0 6px 8px #17334d26);transform:rotate(0deg)}
+.wheel-pointer{position:absolute;z-index:2;top:-12px;left:50%;transform:translateX(-50%);width:38px;height:45px;filter:drop-shadow(0 3px 2px #17334d33);pointer-events:none}
+.wheel-hub{position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-50%);width:21%;aspect-ratio:1;border:5px solid white;border-radius:50%;background:var(--navy);color:white;display:grid;place-items:center;font-size:clamp(21px,7vw,36px);box-shadow:0 3px 9px #17334d44;pointer-events:none}
+.wheel-status{display:inline-block;min-height:42px;padding:10px 18px;border-radius:14px;background:var(--amber-soft);color:#79521c;font-weight:850;font-size:clamp(15px,4vw,19px)}.wheel-remaining{font-size:14px;color:var(--muted);font-weight:650;margin-top:10px}
+@media(max-width:480px){body{padding:8px}.app{padding:10px;border-radius:22px}.panel{padding:14px}.answers{gap:8px}.answer{font-size:15px;padding:10px 8px;gap:7px}.answer-letter{flex-basis:26px;height:26px}.stats{font-size:13px}.pill{padding:8px 9px}}
+@media(max-width:350px){.answers{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.animal,.qanimal{animation:none}.wheel-disc{transition:none!important}button,.bar{transition:none}}
+</style>
+</head>
+<body>
+<main class="app">
+<header><h1>✨ SHOW DE PERGUNTAS!</h1><h2>DESAFIO DO SABER</h2><p>Aprender brincando é muito divertido!</p></header>
+<div class="animals" aria-hidden="true"><span class="animal frog">📚</span><span class="animal bunny">🔢</span><span class="animal butterfly">🧩</span><span class="animal elephant">🔍</span><span class="animal fish">💡</span></div>
+<section id="welcome" class="panel welcome"><h2>🎉 VAMOS BRINCAR?</h2><p>23 perguntas • 20 minutos<br>Cada resposta correta vale 10 pontos!</p><p>Prepare-se para descobrir, aprender e se divertir!</p><button class="primary" onclick="startGame()">COMEÇAR! 🚀</button></section>
+<section id="game" class="hidden">
+<div class="stats"><span class="pill" id="count">Pergunta 1/23</span><span class="pill" id="points">⭐ 0 pontos</span><span class="pill" id="clock">⏱️ 20:00</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="wheelPanel" class="panel wheel-panel hidden">
+<h2>🎡 ROLETA DO SABER!</h2><p>Qual será a próxima pergunta?</p>
+<div class="wheel-stage" aria-hidden="true">
+<svg id="wheelDisc" class="wheel-disc" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg"></svg>
+<div class="wheel-hub">⭐</div>
+<svg class="wheel-pointer" viewBox="0 0 38 45"><path d="M3 3 H35 L19 42 Z" fill="#e8b65c" stroke="#17334d" stroke-width="4" stroke-linejoin="round"/></svg>
+</div>
+<div id="wheelStatus" class="wheel-status" role="status" aria-live="polite">🎡 Girando a roleta...</div>
+<div id="wheelRemaining" class="wheel-remaining"></div>
+</div>
+<div id="questionPanel" class="panel hidden"><div class="question-card"><div class="qanimal" id="qanimal" aria-hidden="true">💡</div><div class="question" id="question"></div></div><div class="answers" id="answers"></div><div id="feedback" class="feedback hidden" aria-live="polite"></div><button id="next" class="primary hidden" onclick="nextQuestion()">PRÓXIMA PERGUNTA ➜</button></div>
+</section>
+<section id="result" class="panel result hidden"><h2>🏆 PARABÉNS!</h2><div style="font-size:55px">🎊 🏅 🎊</div><div class="score" id="finalScore">0 pontos</div><p id="finalMessage">Você terminou o desafio!</p><button class="primary" onclick="resetGame()">JOGAR NOVAMENTE 🔄</button></section>
+<button class="reset" onclick="confirmReset()">🔄 REINICIAR JOGO</button>
+<footer>🌟 BRINCAR • APRENDER • DESCOBRIR 🌟</footer>
+</main>
+<script>
+const questions=[
+["Qual animal faz miau?",["🐶 Cachorro","🐱 Gato","🐮 Vaca","🦆 Pato"],1],
+["Qual é a cor do céu?",["🟢 Verde","🔵 Azul","🔴 Vermelho","🟡 Amarelo"],1],
+["Quanto é 1 + 1?",["3","4","2","5"],2],
+["Qual fruta é amarela?",["🍇 Uva","🍓 Morango","🍌 Banana","🍉 Melancia"],2],
+["Quantas patas tem um cachorro?",["2","4","6","8"],1],
+["Qual é o rei da selva?",["🦁 Leão","🐱 Gato","🐰 Coelho","🐔 Galinha"],0],
+["Qual forma parece uma bola?",["⬛ Quadrado","🔺 Triângulo","⚪ Círculo","▭ Retângulo"],2],
+["Qual letra começa ABELHA?",["B","A","C","D"],1],
+["Quantos dedos temos em uma mão?",["5","2","10","3"],0],
+["Qual animal vive na água?",["🐴 Cavalo","🐟 Peixe","🐵 Macaco","🦁 Leão"],1],
+["Qual é a cor da grama?",["🟣 Roxa","🔵 Azul","🟢 Verde","🟠 Laranja"],2],
+["Qual número vem depois do 4?",["3","6","8","5"],3],
+["O que usamos para escovar os dentes?",["🥄 Colher","🪥 Escova de dentes","🧸 Brinquedo","👟 Sapato"],1],
+["Qual animal tem uma tromba?",["🐘 Elefante","🐱 Gato","🦆 Pato","🐴 Cavalo"],0],
+["Qual destas é uma fruta?",["🪑 Cadeira","🍎 Maçã","⚽ Bola","🛋️ Mesa"],1],
+["Quantos lados tem um triângulo?",["4","5","3","2"],2],
+["Qual animal pula e tem orelhas compridas?",["🐰 Coelho","🐟 Peixe","🐮 Vaca","🦁 Leão"],0],
+["O que usamos nos pés?",["🎩 Chapéu","🧤 Luvas","👟 Sapatos","👓 Óculos"],2],
+["Qual é a primeira letra do alfabeto?",["B","A","C","D"],1],
+["Qual animal voa?",["🐟 Peixe","🐦 Pássaro","🐶 Cachorro","🐢 Tartaruga"],1],
+["Quantas rodas tem uma bicicleta comum?",["2","4","3","1"],0],
+["O que usamos quando chove?",["☂️ Guarda-chuva","🪭 Ventilador","🕶️ Óculos","⚽ Bola"],0],
+["Qual é o contrário de grande?",["Alto","Pequeno","Bonito","Forte"],1]
+];
+const questionNumbers=new Map(questions.map((q,i)=>[q,i+1]));
+// Ícones temáticos na ordem original: o mapa mantém a associação após embaralhar.
+// Para não revelar a alternativa correta, alguns ícones representam a categoria.
+const questionIcons=new Map(questions.map((q,i)=>[q,[
+ "🐾","🎨","🧮","🧺","🐶","🌳","📐","🐝","🧮","🌊","🎨","🔢",
+ "😁","🐾","🧺","📐","🐾","👣","🔤","☁️","🛣️","🌧️","📏"
+][i]]));
+let index=0,score=0,selected=false,timeLeft=1200,timer=null;
+const $=id=>document.getElementById(id);
+let spinTimer=null,spinning=false;
+const wheelColors=["#17334d","#b9d8d6","#176b70","#e3efef"];
+function cancelWheel(){clearTimeout(spinTimer);spinTimer=null;spinning=false;}
+function spinWheel(){
+ cancelWheel();spinning=true;selected=true;
+ $("questionPanel").classList.add("hidden");$("wheelPanel").classList.remove("hidden");
+ $("count").textContent=`Pergunta ${index+1}/23`;
+ $("wheelStatus").textContent="🎡 Girando a roleta...";
+ const remaining=questions.slice(index).map(q=>questionNumbers.get(q)).sort((a,b)=>a-b);
+ const target=questionNumbers.get(questions[index]);
+ $("wheelRemaining").textContent=remaining.length+(remaining.length===1?" pergunta restante":" perguntas restantes");
+ const n=remaining.length,step=360/n,disc=$("wheelDisc");
+ const point=(angle,r)=>[180+r*Math.sin(angle*Math.PI/180),180-r*Math.cos(angle*Math.PI/180)];
+ let markup='<circle cx="180" cy="180" r="179" fill="#fff"/>';
+ remaining.forEach((number,i)=>{
+  const start=i*step,end=(i+1)*step,mid=(start+end)/2,color=wheelColors[i%wheelColors.length];
+  const [x1,y1]=point(start,168),[x2,y2]=point(end,168),[tx,ty]=point(mid,n===1?116:132);
+  const fill=i%wheelColors.length%2===0?"#fff":"#17334d";
+  markup+=n===1?`<circle cx="180" cy="180" r="168" fill="${color}"/>`:`<path d="M180 180 L${x1} ${y1} A168 168 0 ${step>180?1:0} 1 ${x2} ${y2} Z" fill="${color}" stroke="#fff" stroke-width="2"/>`;
+  markup+=`<text x="${tx}" y="${ty}" fill="${fill}" font-size="${n>15?15:22}" font-weight="900" text-anchor="middle" dominant-baseline="central">${number}</text>`;
+ });
+ markup+='<circle cx="180" cy="180" r="173" fill="none" stroke="#17334d" stroke-width="7"/>';
+ disc.innerHTML=markup;
+ disc.style.transition="none";disc.style.transform="rotate(0deg)";
+ void disc.getBoundingClientRect();
+ const targetAngle=(remaining.indexOf(target)+0.5)*step;
+ const rotation=5*360+(360-targetAngle)%360;
+ const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const duration=reduced?0:2700;
+ disc.style.transition=`transform ${duration}ms cubic-bezier(.12,.72,.12,1)`;
+ disc.style.transform=`rotate(${rotation}deg)`;
+ spinTimer=setTimeout(()=>{
+  $("wheelStatus").textContent=`🎉 Pergunta nº ${target} sorteada!`;
+  spinTimer=setTimeout(()=>{
+   spinTimer=null;spinning=false;
+   $("wheelPanel").classList.add("hidden");$("questionPanel").classList.remove("hidden");render();
+  },reduced?300:850);
+ },duration+30);
+}
+function startGame(){ $("welcome").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");spinWheel();timer=setInterval(()=>{timeLeft--;updateClock();if(timeLeft<=0){clearInterval(timer);finish(true)}},1000); }
+function updateClock(){ $("clock").textContent="⏱️ "+String(Math.floor(timeLeft/60)).padStart(2,"0")+":"+String(timeLeft%60).padStart(2,"0");}
+function render(){selected=false;const q=questions[index];$("count").textContent=`Pergunta ${index+1}/23`;$("points").textContent=`⭐ ${score} pontos`;$("bar").style.width=((index+1)/23*100)+"%";$("question").textContent=q[0];$("qanimal").textContent=questionIcons.get(q);$("feedback").className="feedback hidden";$("next").classList.add("hidden");$("answers").innerHTML="";
+q[1].forEach((answer,i)=>{const b=document.createElement("button");b.className="answer";const letter=document.createElement("span");letter.className="answer-letter";letter.textContent="ABCD"[i];const label=document.createElement("span");label.className="answer-text";label.textContent=answer;b.append(letter,label);b.onclick=()=>choose(i);$("answers").appendChild(b)});}
+function choose(i){if(selected||spinning)return;selected=true;const correct=questions[index][2];const buttons=[...$("answers").children];buttons.forEach((b,j)=>{b.disabled=true;if(j===correct){b.classList.add("correct");b.firstElementChild.textContent+=" ✓";b.setAttribute("aria-label",b.textContent+" (resposta correta)")}else if(j===i){b.classList.add("incorrect");b.firstElementChild.textContent+=" ×";b.setAttribute("aria-label",b.textContent+" (resposta incorreta)")}});const f=$("feedback");f.classList.remove("hidden");if(i===correct){score+=10;f.className="feedback good";f.textContent="🎉 MUITO BEM! VOCÊ ACERTOU! +10 pontos"}else{f.className="feedback bad";f.textContent="💛 VAMOS APRENDER! Resposta: "+questions[index][1][correct]}$("points").textContent=`⭐ ${score} pontos`;$("next").classList.remove("hidden");$("next").textContent=index===22?"VER RESULTADO 🏆":"PRÓXIMA PERGUNTA ➜";}
+function nextQuestion(){if(spinning||!selected)return;if(index===22){finish(false);return}index++;spinWheel()}
+function finish(timeUp){cancelWheel();clearInterval(timer);$("game").classList.add("hidden");$("result").classList.remove("hidden");$("finalScore").textContent=score+" pontos";$("finalMessage").textContent=timeUp?"O tempo acabou! Você fez um ótimo trabalho!":"Você respondeu às 23 perguntas. Continue aprendendo e brincando!";}
+function shuffleQuestions(){
+ const previous=questions.slice();
+ for(let i=questions.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [questions[i],questions[j]]=[questions[j],questions[i]];
+ }
+ // Garante uma ordem diferente da rodada anterior.
+ if(questions.length>1&&questions.every((q,i)=>q===previous[i])){
+  [questions[0],questions[1]]=[questions[1],questions[0]];
+ }
+}
+function resetGame(){cancelWheel();$("wheelPanel").classList.add("hidden");$("questionPanel").classList.add("hidden");clearInterval(timer);shuffleQuestions();index=0;score=0;selected=false;timeLeft=1200;$("game").classList.add("hidden");$("result").classList.add("hidden");$("welcome").classList.remove("hidden");$("points").textContent="⭐ 0 pontos";updateClock();$("bar").style.width="0%";}
+function confirmReset(){if(confirm("Deseja reiniciar o jogo? A pontuação, as perguntas e o cronômetro voltarão ao início."))resetGame();}
+shuffleQuestions();
+updateClock();
+</script>
+</body>
+</html>
